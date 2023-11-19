@@ -1,9 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(cors());
 
 const db = process.env.DB_URL;
 mongoose
@@ -14,6 +17,13 @@ mongoose
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
 // Serve the HTML file
 app.get('/', (req, res) => {
