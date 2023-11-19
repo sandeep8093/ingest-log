@@ -23,15 +23,15 @@ const queryLog = async (req, res) => {
           const endDateParts = req.query.endDate.split('-');
         
           const startDate = new Date(
-            startDateParts[2], // Year
+            startDateParts[0], // Year
             startDateParts[1] - 1, // Month 
-            startDateParts[0] // Day
+            startDateParts[2] // Day
           );
         
           const endDate = new Date(
-            endDateParts[2], // Year
+            endDateParts[0], // Year
             endDateParts[1] - 1, // Month
-            endDateParts[0] // Day
+            endDateParts[2] // Day
           );
         
           dateFilter = {
