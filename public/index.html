@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Query Interface</title>
+    <!-- Add some styling for better presentation -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #searchResults {
+            list-style: none;
+            padding: 0;
+        }
+
+        #searchResults li {
+            border: 1px solid #ddd;
+            margin-top: -1px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Log Query Interface</h1>
+
+    <label for="query">Search Query:</label>
+    <input type="text" id="query" placeholder="Enter search query">
+    
+    <label for="filterField">Filter Field:</label>
+    <select id="filterField">
+        <option value="level">Level</option>
+        <option value="message">Message</option>
+        <option value="resourceId">Resource ID</option>
+        <option value="timestamp">Timestamp</option>
+        <option value="traceId">Trace ID</option>
+        <option value="spanId">Span ID</option>
+        <option value="commit">Commit</option>
+        <option value="metadata.parentResourceId">Parent Resource ID</option>
+    </select>
+
+    <label for="filterValue">Filter Value:</label>
+    <input type="text" id="filterValue" placeholder="Enter filter value">
+
+    <label for="startDate">Start Date:</label>
+    <input type="datetime-local" id="startDate">
+
+    <label for="endDate">End Date:</label>
+    <input type="datetime-local" id="endDate">
+
+    <button onclick="searchLogs()">Search</button>
+
+    <ul id="searchResults"></ul>
+
+    <script>
+        async function searchLogs() {
+            const query = document.getElementById('query').value;
+            const filterField = document.getElementById('filterField').value;
+            const filterValue = document.getElementById('filterValue').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            const response = await fetch(`http://localhost:3000/log/search?query=${query}&filterField=${filterField}&filterValue=${filterValue}&startDate=${startDate}&endDate=${endDate}`);
+            console.log(response)
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+        // const logs = await response.json();
+            const logs = await response.json();
+
+            const resultsList = document.getElementById('searchResults');
+            resultsList.innerHTML = '';
+
+            logs.forEach(log => {
+                const listItem = document.createElement('li');
+                // Display specific log properties instead of the entire log object
+                listItem.textContent = `Level: ${log.level}, Message: ${log.message}, Timestamp: ${log.timestamp}`;
+                resultsList.appendChild(listItem);
+            });
+        }
+    </script>
+</body>
+</html>
